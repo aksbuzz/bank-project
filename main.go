@@ -33,12 +33,10 @@ func main() {
 
 	store := store.New(conn)
 
-	httpServer := server.NewHttpServer(store, cfg, logger)
-	taskScheduler := server.NewTaskScheduler(store, logger)
-	// grpcServer := server.NewGrpcServer()
-	servers := []server.Server{httpServer, taskScheduler}
+	s := server.New(logger)
+	s.Add(server.NewHttpServer(store, cfg, logger))
+	s.Add(server.NewTaskScheduler(store, logger))
 
-	s := server.New(logger, servers)
 	err = s.Run(ctx)
 	if err != nil {
 		panic(err)

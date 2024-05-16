@@ -13,8 +13,12 @@ type server struct {
 	servers []Server
 }
 
-func New(logger *slog.Logger, servers []Server) *server {
-	return &server{logger: logger, servers: servers}
+func New(logger *slog.Logger) *server {
+	return &server{logger: logger}
+}
+
+func (s *server) Add(server Server) {
+	s.servers = append(s.servers, server)
 }
 
 type Server interface {
