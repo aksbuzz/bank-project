@@ -24,6 +24,8 @@ type HttpServer struct {
 func NewHttpServer(store *store.Store, cfg *config.Config, logger *slog.Logger) *HttpServer {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.RequestID)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("👋"))

@@ -160,8 +160,6 @@ func (q *Queries) UpdateLoanOverdueFee(ctx context.Context, arg UpdateLoanOverdu
 }
 
 const updateLoanReturnDate = `-- name: UpdateLoanReturnDate :exec
-
-
 UPDATE loans
 SET return_date = $2 
 WHERE id = $1
@@ -172,22 +170,6 @@ type UpdateLoanReturnDateParams struct {
 	ReturnDate pgtype.Date `json:"return_date"`
 }
 
-// -- name: ListOverdueLoans :many
-// SELECT b.title, b.author, m.name, l.loan_date, l.due_date, l.return_date, l.overdue_fee FROM loans l
-// INNER JOIN books b ON l.book_id = b.id
-// INNER JOIN members m ON l.member_id = m.id
-// WHERE l.return_date IS NULL AND CURDATE() > l.due_date
-// ORDER BY l.id
-// LIMIT $1
-// OFFSET $2;
-// -- name: ListLoansByMember :many
-// SELECT b.title, b.author, m.name, l.loan_date, l.due_date, l.return_date, l.overdue_fee FROM loans l
-// INNER JOIN books b ON l.book_id = b.id
-// INNER JOIN members m ON l.member_id = m.id
-// WHERE member_id = $1
-// ORDER BY l.id
-// LIMIT $2
-// OFFSET $3;
 func (q *Queries) UpdateLoanReturnDate(ctx context.Context, arg UpdateLoanReturnDateParams) error {
 	_, err := q.db.Exec(ctx, updateLoanReturnDate, arg.ID, arg.ReturnDate)
 	return err

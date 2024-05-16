@@ -12,13 +12,13 @@ import (
 func (s *Service) GetLoans(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	cursor, err := parseInt32(r.URL.Query().Get("cursor"))
+	cursor, err := parseInt32(r.URL.Query().Get("cursor"), 0)
 	if err != nil {
 		s.logger.ErrorContext(ctx, "error parsing cursor", slog.String("service.GetLoans", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	limit, err := parseInt32(r.URL.Query().Get("limit"))
+	limit, err := parseInt32(r.URL.Query().Get("limit"), 10)
 	if err != nil {
 		s.logger.ErrorContext(ctx, "error parsing limit", slog.String("service.GetLoans", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -148,6 +148,12 @@ func (s *Service) UpdateLoanReturnDate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if loan.ReturnDate.Valid {
+		s.logger.ErrorContext(ctx, "error updating loan", slog.String("service.UpdateLoanReturnDate", "loan already returned"))
+		http.Error(w, "loan already returned", http.StatusBadRequest)
+		return
+	}
+
 	err = s.store.DB.ExecTransaction(ctx, func(qtx *db.Queries) error {
 		book, err := qtx.GetBookForUpdate(ctx, loan.BookID)
 		if err != nil {
@@ -156,7 +162,7 @@ func (s *Service) UpdateLoanReturnDate(w http.ResponseWriter, r *http.Request) {
 
 		update := db.UpdateLoanReturnDateParams{
 			ID:         id,
-			ReturnDate: loan.ReturnDate,
+			ReturnDate: body.ReturnDate,
 		}
 		err = qtx.UpdateLoanReturnDate(ctx, update)
 		if err != nil {

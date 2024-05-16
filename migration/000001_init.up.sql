@@ -8,12 +8,7 @@ CREATE TABLE IF NOT EXISTS books (
 );
 CREATE INDEX author_index ON books (author);
 
-DO $$
-BEGIN
-	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'enum_membership_type') THEN
-		CREATE TYPE enum_membership_type AS ENUM ('basic', 'premium');
-	END IF;
-END$$;
+CREATE TYPE enum_membership_type AS ENUM ('basic', 'premium');
 
 CREATE TABLE IF NOT EXISTS members (
 	id serial NOT NULL,

@@ -12,13 +12,13 @@ import (
 func (s *Service) GetBooks(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	cursor, err := parseInt32(r.URL.Query().Get("cursor"))
+	cursor, err := parseInt32(r.URL.Query().Get("cursor"), 0)
 	if err != nil {
 		s.logger.ErrorContext(ctx, "error parsing cursor", slog.String("service.Getbooks", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	limit, err := parseInt32(r.URL.Query().Get("limit"))
+	limit, err := parseInt32(r.URL.Query().Get("limit"), 10)
 	if err != nil {
 		s.logger.ErrorContext(ctx, "error parsing limit", slog.String("service.Getbooks", err.Error()))
 		http.Error(w, err.Error(), http.StatusBadRequest)

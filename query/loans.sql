@@ -18,24 +18,6 @@ ORDER BY l.id
 LIMIT sqlc.arg('limit')
 ;
 
--- -- name: ListOverdueLoans :many
--- SELECT b.title, b.author, m.name, l.loan_date, l.due_date, l.return_date, l.overdue_fee FROM loans l
--- INNER JOIN books b ON l.book_id = b.id
--- INNER JOIN members m ON l.member_id = m.id
--- WHERE l.return_date IS NULL AND CURDATE() > l.due_date
--- ORDER BY l.id
--- LIMIT $1
--- OFFSET $2;
-
--- -- name: ListLoansByMember :many
--- SELECT b.title, b.author, m.name, l.loan_date, l.due_date, l.return_date, l.overdue_fee FROM loans l
--- INNER JOIN books b ON l.book_id = b.id
--- INNER JOIN members m ON l.member_id = m.id
--- WHERE member_id = $1
--- ORDER BY l.id
--- LIMIT $2
--- OFFSET $3;
-
 -- name: UpdateLoanReturnDate :exec
 UPDATE loans
 SET return_date = $2 

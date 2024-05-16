@@ -29,7 +29,7 @@ func (s *Service) Register(r *chi.Mux) {
 		r.Post("/members", s.CreateMember)
 		r.Get("/members/{id}", s.GetMember)
 		r.Put("/members/{id}", s.UpdateMember)
-		r.Patch("/members/${id}", s.UpdateMembership)
+		r.Patch("/members/{id}", s.UpdateMembership)
 
 		r.Get("/loans", s.GetLoans)
 		r.Post("/loans", s.CreateLoan)
@@ -38,7 +38,11 @@ func (s *Service) Register(r *chi.Mux) {
 	})
 }
 
-func parseInt32(urlParam string) (int32, error) {
+func parseInt32(urlParam string, defaultVal ...int32) (int32, error) {
+	if len(defaultVal) > 0 && urlParam == "" {
+		return defaultVal[0], nil
+	}
+
 	param, err := strconv.Atoi(urlParam)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse param: %w", err)
